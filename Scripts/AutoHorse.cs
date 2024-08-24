@@ -11,12 +11,15 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace AutoHorseMod
 {
     public class AutoHorse : MonoBehaviour
     {
         TransportManager transportManager;
+        ModSettings settings;
+
         static Mod mod;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -27,6 +30,7 @@ namespace AutoHorseMod
             go.AddComponent<AutoHorse>();
         }
         void Awake(){
+            settings = mod.GetSettings();
             mod.IsReady = true;
         }
         void Start(){
@@ -35,6 +39,9 @@ namespace AutoHorseMod
             // On Events:
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
+
+            // Settings:
+            bool rememberTransportMode = settings.GetBool("RememberTransportMode", "RememberTransportMode");
         }
         ////////////////////////////////////////////////////////////////////////
         private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){

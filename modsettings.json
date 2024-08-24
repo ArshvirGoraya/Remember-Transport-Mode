@@ -1,0 +1,20 @@
+{
+    "Version": "1.0.0",
+    "Sections": [
+        {
+            "Name": "RememberTransportMode",
+            "Description": "Remember the transport mode you came into the interior with and automatically select that when exiting interiors.",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Value": true,
+                    "Name": "RememberTransportMode",
+                    "Description": "Remember the transport mode you came into the interior with and automatically select that when exiting the interior.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                }
+            ],
+            "$version": "v1"
+        }
+    ]
+}
