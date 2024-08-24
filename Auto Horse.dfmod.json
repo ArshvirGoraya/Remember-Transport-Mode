@@ -8,6 +8,7 @@
     "GUID": "cf4771ee-96cc-49e2-b11c-c3cb3a04ab4c",
     "Files": [
         "Assets/Game/Mods/AutoHorse/Scripts/AutoHorse.cs",
-        "Assets/Game/Mods/AutoHorse/modsettings.json"
+        "Assets/Game/Mods/AutoHorse/modsettings.json",
+        "Assets/Game/Mods/AutoHorse/Scripts/AutoHorseModSaveData.cs"
     ]
 }

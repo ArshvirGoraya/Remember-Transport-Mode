@@ -13,13 +13,17 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace AutoHorseMod
 {
     public class AutoHorse : MonoBehaviour
     {
+        AutoHorseModSaveData autoHorseModSaveData = new AutoHorseModSaveData(); // * per save slot data.
         TransportManager transportManager;
         TransportModes storedTransportMode;
+        SaveLoadManager saveLoadManager;
+
         bool onShip;
         bool onShipChanged;
 
@@ -41,10 +45,17 @@ namespace AutoHorseMod
             mod.IsReady = true;
         }
         void Start(){
+            mod.SaveDataInterface = autoHorseModSaveData;
+
             transportManager = GameManager.Instance.TransportManager;
             storedTransportMode = transportManager.TransportMode;
             onShip = transportManager.IsOnShip();
             onShipChanged = false;
+
+
+            // saveLoadManager =  GameManager.Instance.SaveLoadManager;
+            // saveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
 
             // transportWindow = (DaggerfallTransportWindow)UIWindowFactory.GetInstance(UIWindowType.Transport, DaggerfallUI.Instance.UserInterfaceManager);
             // Button transportFootButton = transportWindow.footButton;
@@ -60,6 +71,19 @@ namespace AutoHorseMod
             // }
 
             Debug.Log($"Auto Horse - stored transport mode: {storedTransportMode}"); // TODO: Should set when loading in.
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
+            Debug.Log($"Auto Horse - loaded save: {saveData}");
+            if (autoHorseModSaveData.storedTransportMode == null){
+                Debug.Log($"Auto Horse - stored transport mode is null: {autoHorseModSaveData.storedTransportMode}");
+                autoHorseModSaveData.storedTransportMode = transportManager.TransportMode;
+            }else{
+                Debug.Log($"Auto Horse - stored transport mode is NOT null: {autoHorseModSaveData.storedTransportMode}");
+            }
+
+            // * Get stored transport mode for loaded save slot.
+            storedTransportMode = (TransportModes)autoHorseModSaveData.storedTransportMode;
         }
 
         void Update(){
@@ -91,6 +115,8 @@ namespace AutoHorseMod
                 storedTransportMode = newTransportMode; 
             }
         }
+
+
 
         private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){
             // * Entered Exterior
