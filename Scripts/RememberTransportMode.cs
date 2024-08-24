@@ -20,7 +20,6 @@ namespace RememberTransportMode
     {
         RememberTransportModeModSaveData rememberTransportModeModSaveData = new RememberTransportModeModSaveData(); // * per save slot data.
         TransportManager transportManager;
-        TransportModes storedTransportMode;
         SaveLoadManager saveLoadManager;
         bool onShip;
         bool onShipChanged;
@@ -54,10 +53,10 @@ namespace RememberTransportMode
         }
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
             // * Get stored transport mode for loaded save slot.
+            Debug.Log($"on load get: storedTransportMode: {rememberTransportModeModSaveData.storedTransportMode}");
             if (rememberTransportModeModSaveData.storedTransportMode == null){
                 rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
             }
-            storedTransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
         }
         void Update(){
             // * Detect when entering/exiting ship since there is no accessible event for it.
@@ -70,19 +69,21 @@ namespace RememberTransportMode
             }
 
             // * Detect when TransportMode has changed: does not include ship for some reason: foot, horse, cart only.
-            if (transportManager.TransportMode != storedTransportMode){
-                changedTransportMode(storedTransportMode, transportManager.TransportMode);
+            if (rememberTransportModeModSaveData.storedTransportMode != null && 
+                transportManager.TransportMode != (TransportModes)rememberTransportModeModSaveData.storedTransportMode)
+            {
+                changedTransportMode((TransportModes)rememberTransportModeModSaveData.storedTransportMode, transportManager.TransportMode);
             }
         }
         private void changedTransportMode(TransportModes previousTransportMode, TransportModes newTransportMode){            
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside){
                 if (onShipChanged && onShip){ // * Warped to ship.
                     // * Automatically switches to foot when on ship. Must reset to stored when entered ship.
-                    transportManager.TransportMode = storedTransportMode;
+                    transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
                     return;
                 } 
                 // * Store changed transport mode if outside:
-                storedTransportMode = newTransportMode; 
+                rememberTransportModeModSaveData.storedTransportMode = newTransportMode; 
             }
         }
         private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){
@@ -95,7 +96,7 @@ namespace RememberTransportMode
                     );
             }
             // * Entered exterior: Set to stored transport mode. 
-            transportManager.TransportMode = storedTransportMode;
+            transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
         }
     }
 }
