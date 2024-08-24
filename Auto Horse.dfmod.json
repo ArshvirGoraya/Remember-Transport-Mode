@@ -1,0 +1,12 @@
+{
+    "ModTitle": "Auto Horse",
+    "ModVersion": "0.0.0",
+    "ModAuthor": "Arshvir Goraya",
+    "ContactInfo": "arshvir.dev@gmail.com",
+    "DFUnity_Version": "1.1.0",
+    "ModDescription": "Automatically select horse when entering exteriors",
+    "GUID": "cf4771ee-96cc-49e2-b11c-c3cb3a04ab4c",
+    "Files": [
+        "Assets/Game/Mods/AutoHorse/AutoHorse.cs"
+    ]
+}
