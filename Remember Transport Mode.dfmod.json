@@ -1,0 +1,13 @@
+{
+    "ModTitle": "Remember Transport Mode",
+    "ModVersion": "1.0.0",
+    "ModAuthor": "Arshvir Goraya",
+    "ContactInfo": "arshvir.dev@gmail.com",
+    "DFUnity_Version": "1.1.0",
+    "ModDescription": "When exiting an interior, automatically set transport mode to what it was when you entered the interior.",
+    "GUID": "5d5d083f-b08f-46f8-8f8b-09c8a4f1b17a",
+    "Files": [
+        "Assets/Game/Mods/RememberTransportMode/Scripts/RememberTransportModeModSaveData.cs",
+        "Assets/Game/Mods/RememberTransportMode/Scripts/RememberTransportMode.cs"
+    ]
+}
