@@ -5,8 +5,6 @@
 // Origin Date:     August 23 2024
 // Source Code:     https://github.com/ArshvirGoraya/daggerfall-unity-mod-autohorse
 
-// using System.Collections;
-// using System.Collections.Generic;
 using System;
 using UnityEngine;
 using DaggerfallWorkshop;
@@ -18,8 +16,9 @@ namespace AutoHorseMod
 {
     public class AutoHorse : MonoBehaviour
     {
-        // PlayerGPS playerGPS;
+        TransportManager transportManager;
         static Mod mod;
+
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
         {
@@ -27,18 +26,21 @@ namespace AutoHorseMod
             var go = new GameObject(mod.Title);
             go.AddComponent<AutoHorse>();
         }
-        void Awake()
-        {
-            // var settings = mod.GetSettings();
+        void Awake(){
             mod.IsReady = true;
         }
         void Start(){
-            // PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
+            transportManager = GameManager.Instance.TransportManager;
+
+            // On Events:
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
         }
+        ////////////////////////////////////////////////////////////////////////
         private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){
-            Debug.Log($"auto horse - Event: PlayerEnterExit_OnTransitionExterior = exit location rect event handler. GameManager: {GameManager.Instance}");
+            if (transportManager.HasHorse()){
+                transportManager.TransportMode = TransportModes.Horse;
+            }
         }
     }
 }
