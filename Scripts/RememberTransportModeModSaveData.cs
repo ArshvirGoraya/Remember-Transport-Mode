@@ -22,19 +22,16 @@ namespace RememberTransportMode
         }
         public object NewSaveData()
         {
-            Debug.Log($"NewSaveData called");
             return new RememberTransportModeModSaveData();
         }
         public object GetSaveData()
         {
-            Debug.Log($"GetSaveData called: {this.storedTransportMode}");
             return this;
         }
         public void RestoreSaveData(object obj)
         {
             RememberTransportModeModSaveData other = (RememberTransportModeModSaveData)obj;
             storedTransportMode = other.storedTransportMode;
-            Debug.Log($"on restore: storedTransportMode: {storedTransportMode}");
         }
     }
 }

@@ -53,7 +53,6 @@ namespace RememberTransportMode
         }
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
             // * Get stored transport mode for loaded save slot.
-            Debug.Log($"on load get: storedTransportMode: {rememberTransportModeModSaveData.storedTransportMode}");
             if (rememberTransportModeModSaveData.storedTransportMode == null){
                 rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
             }
@@ -77,11 +76,11 @@ namespace RememberTransportMode
         }
         private void changedTransportMode(TransportModes previousTransportMode, TransportModes newTransportMode){            
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside){
-                if (onShipChanged && onShip){ // * Warped to ship.
-                    // * Automatically switches to foot when on ship. Must reset to stored when entered ship.
+                if (onShipChanged){ // * Warped to ship or out of ship.
+                    // * Automatically switches to foot when warping on or off ship. Must reset to stored.
                     transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
                     return;
-                } 
+                }
                 // * Store changed transport mode if outside:
                 rememberTransportModeModSaveData.storedTransportMode = newTransportMode; 
             }
