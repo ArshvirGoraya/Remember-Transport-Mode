@@ -35,18 +35,43 @@ namespace AutoHorseMod
         }
         void Start(){
             transportManager = GameManager.Instance.TransportManager;
+            transportManager.HandleTransition = PlayerEnterExit_OnPreTransition;
+
+            // Settings:
+            bool rememberTransportMode = settings.GetBool("RememberTransportMode", "RememberTransportMode");
 
             // On Events:
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
 
-            // Settings:
-            bool rememberTransportMode = settings.GetBool("RememberTransportMode", "RememberTransportMode");
+            PlayerEnterExit.OnTransitionInterior += PlayerEnterExit_OnTransitionInterior;
+            PlayerEnterExit.OnPreTransition += PlayerEnterExit_OnPreTransition;
+
+            // if (rememberTransportMode){
+            //     PlayerEnterExit.OnTransitionInterior += PlayerEnterExit_OnTransitionInterior;
+            // }
         }
         ////////////////////////////////////////////////////////////////////////
         private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){
             if (transportManager.HasHorse()){
                 transportManager.TransportMode = TransportModes.Horse;
+            }
+        }
+
+        private void PlayerEnterExit_OnTransitionInterior(PlayerEnterExit.TransitionEventArgs args){
+            Debug.Log("auto horse - entered interior");
+        }
+
+        private void PlayerEnterExit_OnPreTransition(PlayerEnterExit.TransitionEventArgs args){
+            if (
+                args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingInterior || 
+                args.TransitionType == PlayerEnterExit.TransitionType.ToDungeonInterior
+            ){
+                Debug.Log($"auto horse - going to interior... with: {transportManager.TransportMode}");
+                // ! Is updating to foot before this... so can't store what TransportMode we are in on entering interiors...
+                // ! Inside of HandleTransition in TransportManager.cs.
+                // ! Alternative way to store TransportMode: when loading into game, get the transport mode.
+                // ! When switching TransportMode's: store the new TransportMode
             }
         }
     }
