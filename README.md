@@ -21,7 +21,7 @@ Here is a video example: https://youtu.be/SGXTbxKmniw
 
 ## Installation Guide
 
-- Follow the guide on the Nexus Mod Page: **[*NEXUS URL HERE*]**
+- Follow the guide on the Nexus Mod Page: https://www.nexusmods.com/daggerfallunity/mods/785/
 
 ## Extra
 
