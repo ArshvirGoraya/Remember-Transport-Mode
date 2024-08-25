@@ -1,15 +1,23 @@
-# Remember Transport Mode Mod For Daggerfall Unity
+# Remember Transport Mode: Mod For Daggerfall Unity
 
-Source for Remember Transport Mode mod for [Daggerfall Unity](https://github.com/Interkarma/daggerfall-unity), an open source recreation of The Elder Scrolls II: Daggerfall.
+A mod for [Daggerfall Unity](https://github.com/Interkarma/daggerfall-unity), an open source recreation of The Elder Scrolls II: Daggerfall.
+
+<p align="center">
+  <img width="50%" src="https://raw.githubusercontent.com/ArshvirGoraya/Remember-Transport-Mode/main/.github/Images/Remember%20Transportaion%20Mode%20Picture%20-%20small.jpg" alt="Heasder Image for Remember Transport Mode Mod" />
+</p>
 
 ## What Does the Mod Do?
 
-- Remembers what transport mode you were in when entering an interior location.
-- When exiting interior location, automatically sets player's transport mode to what it was when they entered it.
-- Example: You enter a dungeon on a horse. When you exit, you will be put back on a horse.
-  - Without this mod, you will simply be on foot when exiting, and would have to manually select horse from the transport menu, every single time you exit a interior location.
+<img align="right" width="50%" src="https://github.com/ArshvirGoraya/Remember-Transport-Mode/blob/main/.github/Images/RememberTransportMode-DaggerfallUnityMod-Giffablevideo.gif" alt="A gif showing the effects of the mod" />
 
-**[*VIDEO HERE*]**
+- Remembers what transport mode you were in when entering an interior location.
+- When exiting an interior location, this mod will automatically sets player's transport mode to what it was when they entered it.
+- Example: You enter a dungeon on a horse. When you exit, you will be put back on a horse.
+  - Without this quality of life mod, you will instead be on the foot transport mode when exiting, which is much slower. So, you would have to manually select horse from the transport menu, every single time you exit any interior location.
+
+Here is a video example: https://youtu.be/SGXTbxKmniw
+
+
 
 ## Installation Guide
 
@@ -19,3 +27,6 @@ Source for Remember Transport Mode mod for [Daggerfall Unity](https://github.com
 
 - This is my first ever mod for any game! It was very simple and was made in around a day.
 - If you want to get started modding for Daggerfall Unity, I recommend this guide: <https://dfu-modding.fandom.com/wiki/Making_Mods#Basic_Tools_For_Making_Mods>
+
+## Donate
+<a href='https://ko-fi.com/Z8Z6NP272' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
