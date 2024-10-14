@@ -9,6 +9,8 @@ using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop;
+using DaggerfallConnect.Utility;
 
 namespace RememberTransportMode
 {
@@ -18,6 +20,7 @@ namespace RememberTransportMode
         TransportManager transportManager;
         bool onShip;
         bool onShipChanged;
+        bool teleporting;
 
         static Mod mod;
         [Invoke(StateManager.StateTypes.Start, 0)]
@@ -34,16 +37,29 @@ namespace RememberTransportMode
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
+            StreamingWorld.OnTeleportToCoordinates += Teleported;
 
             onShip = transportManager.IsOnShip();
             onShipChanged = false;
         }
+        // * ON SAVE LOAD: rememberTransportModeModSaveData.storedTransportMode is loaded automatically. 
+        // * This is incase it is null (hasn't been stored on this save yet).
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
-            // * Incase it doesn't exist: stored transport mode doesn't exist for current save:
             if (rememberTransportModeModSaveData.storedTransportMode == null)
                 rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
         }
+        private void Teleported(DFPosition worldPos){
+            // Debug.Log($"teleporting");
+            teleporting = true;
+        }
+        // * DETECT TRANSPORT MODE CHANGES (can't use events for now as they are not implemented)
         void Update(){
+             // * Optimizations:
+            if (!GameManager.Instance.StateManager.GameInProgress 
+                || GameManager.IsGamePaused
+                || GameManager.Instance.PlayerEnterExit.IsPlayerInside // * no need to run or save when inside buildings.
+            ){ return; }
+            // * Order matters: ship logic, then call OnTransportModeChanged, then teleporting.
             // * Detect when entering/exiting ship since there is no accessible event for it.
             if (onShipChanged){
                 onShipChanged = false;
@@ -52,23 +68,36 @@ namespace RememberTransportMode
                 onShip = transportManager.IsOnShip();
                 onShipChanged = true;
             }
-            // * Detect when TransportMode has changed: does not include ship for some reason: foot, horse, cart only.
+            // * Detect when TransportMode has changed: does not include ship: foot, horse, cart only.
             if (transportManager.TransportMode != (TransportModes)rememberTransportModeModSaveData.storedTransportMode){
-                OnTransportModeChange(transportManager.TransportMode);
+                OnTransportModeChanged(transportManager.TransportMode);
+            }
+            if (teleporting) {
+                teleporting = false;
             }
         }
-        private void OnTransportModeChange(TransportModes newTransportMode){            
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside){
-                if (onShipChanged){ // * Warped to ship or out of ship.
-                    // * Automatically switches to foot when warping on or off ship. Must reset to stored.
-                    transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
-                    return;
-                }
-                // * Store changed transport mode if outside:
-                rememberTransportModeModSaveData.storedTransportMode = newTransportMode; 
+        // * STORE/SAVE TRANSPORT MODE.
+        private void OnTransportModeChanged(TransportModes newTransportMode){
+            // * Order Matters: ship, then teleport, then save.
+            if (onShipChanged){ // * Warped to ship or out of ship.
+                // * Automatically switches to foot when warping on or off ship. Must reset to stored.
+                transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
+                return;
             }
+            if (teleporting) {  // * Don't save when teleporting.
+                // Debug.Log($"don't save when teleporting");
+                return;
+            }
+            // * Store changed transport mode if outside:
+            // Debug.Log($"store transport mode");
+            rememberTransportModeModSaveData.storedTransportMode = newTransportMode; 
         }
-        private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){
+        // * SET TO STORED TRANSPORT MODE.
+        private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args){ 
+            // Debug.Log($"entered exterior");
+            SetToStoredTransportMode(); 
+        }
+        void SetToStoredTransportMode(){
             if(onShip){ // * Exited interior of ship. 
                 // * If on Horse or Cart: Must raise the player a bit into the air or will clip through the ship.
                 GameManager.Instance.PlayerObject.transform.position = new Vector3(
