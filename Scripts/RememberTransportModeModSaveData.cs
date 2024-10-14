@@ -6,8 +6,6 @@
 // Source Code:     https://github.com/ArshvirGoraya/daggerfall-unity-mod-RememberTransportMode
 
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 

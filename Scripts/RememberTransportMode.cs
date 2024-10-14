@@ -5,57 +5,43 @@
 // Origin Date:     August 23 2024
 // Source Code:     https://github.com/ArshvirGoraya/daggerfall-unity-mod-RememberTransportMode
 
-using System;
 using UnityEngine;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 
 namespace RememberTransportMode
 {
     public class RememberTransportMode : MonoBehaviour
     {
-        RememberTransportModeModSaveData rememberTransportModeModSaveData = new RememberTransportModeModSaveData(); // * per save slot data.
+        readonly RememberTransportModeModSaveData rememberTransportModeModSaveData = new RememberTransportModeModSaveData(); // * per save slot data.
         TransportManager transportManager;
-        SaveLoadManager saveLoadManager;
         bool onShip;
         bool onShipChanged;
-        DaggerfallTransportWindow transportWindow;
+
         static Mod mod;
         [Invoke(StateManager.StateTypes.Start, 0)]
-        public static void Init(InitParams initParams)
-        {
+        public static void Init(InitParams initParams){
             mod = initParams.Mod;
             var go = new GameObject(mod.Title);
             go.AddComponent<RememberTransportMode>();
-        }
-        void Awake(){
             mod.IsReady = true;
         }
         void Start(){
-            // * Save Loading
-            mod.SaveDataInterface = rememberTransportModeModSaveData;
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
-
-            // * Transport Mode Controllers:
             transportManager = GameManager.Instance.TransportManager;
-            
-            // * Ship edge case:
-            onShip = transportManager.IsOnShip();
-            onShipChanged = false;
+            mod.SaveDataInterface = rememberTransportModeModSaveData;
 
-            // * Enter Exterior Events:
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
+
+            onShip = transportManager.IsOnShip();
+            onShipChanged = false;
         }
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
-            // * Get stored transport mode for loaded save slot.
-            if (rememberTransportModeModSaveData.storedTransportMode == null){
+            // * Incase it doesn't exist: stored transport mode doesn't exist for current save:
+            if (rememberTransportModeModSaveData.storedTransportMode == null)
                 rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
-            }
         }
         void Update(){
             // * Detect when entering/exiting ship since there is no accessible event for it.
@@ -66,15 +52,12 @@ namespace RememberTransportMode
                 onShip = transportManager.IsOnShip();
                 onShipChanged = true;
             }
-
             // * Detect when TransportMode has changed: does not include ship for some reason: foot, horse, cart only.
-            if (rememberTransportModeModSaveData.storedTransportMode != null && 
-                transportManager.TransportMode != (TransportModes)rememberTransportModeModSaveData.storedTransportMode)
-            {
-                changedTransportMode((TransportModes)rememberTransportModeModSaveData.storedTransportMode, transportManager.TransportMode);
+            if (transportManager.TransportMode != (TransportModes)rememberTransportModeModSaveData.storedTransportMode){
+                OnTransportModeChange(transportManager.TransportMode);
             }
         }
-        private void changedTransportMode(TransportModes previousTransportMode, TransportModes newTransportMode){            
+        private void OnTransportModeChange(TransportModes newTransportMode){            
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside){
                 if (onShipChanged){ // * Warped to ship or out of ship.
                     // * Automatically switches to foot when warping on or off ship. Must reset to stored.
