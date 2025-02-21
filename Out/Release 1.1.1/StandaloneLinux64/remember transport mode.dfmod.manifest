@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 3390969182
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c73f77c0db7ef2a95da3c86f79cc63a1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Game/Mods/RememberTransportMode/Remember Transport Mode.dfmod.json
+- Assets/Untracked/ModBuilder/Remember Transport Mode.dll.bytes
+Dependencies: []

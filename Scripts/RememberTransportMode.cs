@@ -45,8 +45,7 @@ namespace RememberTransportMode
         // * ON SAVE LOAD: rememberTransportModeModSaveData.storedTransportMode is loaded automatically. 
         // * This is incase it is null (hasn't been stored on this save yet).
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData){
-            if (rememberTransportModeModSaveData.storedTransportMode == null)
-                rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
+            EnsureStoredTransportModeIsNotNull();
         }
         private void Teleported(DFPosition worldPos){
             // Debug.Log($"teleporting");
@@ -69,6 +68,7 @@ namespace RememberTransportMode
                 onShipChanged = true;
             }
             // * Detect when TransportMode has changed: does not include ship: foot, horse, cart only.
+            EnsureStoredTransportModeIsNotNull();
             if (transportManager.TransportMode != (TransportModes)rememberTransportModeModSaveData.storedTransportMode){
                 OnTransportModeChanged(transportManager.TransportMode);
             }
@@ -77,10 +77,17 @@ namespace RememberTransportMode
             }
         }
         // * STORE/SAVE TRANSPORT MODE.
+        private void EnsureStoredTransportModeIsNotNull(){
+            if (rememberTransportModeModSaveData.storedTransportMode == null){
+                rememberTransportModeModSaveData.storedTransportMode = transportManager.TransportMode;
+            }
+        }
+
         private void OnTransportModeChanged(TransportModes newTransportMode){
             // * Order Matters: ship, then teleport, then save.
             if (onShipChanged){ // * Warped to ship or out of ship.
                 // * Automatically switches to foot when warping on or off ship. Must reset to stored.
+                EnsureStoredTransportModeIsNotNull();
                 transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
                 return;
             }
@@ -107,7 +114,9 @@ namespace RememberTransportMode
                     );
             }
             // * Entered exterior: Set to stored transport mode. 
-            transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
+            if (rememberTransportModeModSaveData.storedTransportMode != null){
+                transportManager.TransportMode = (TransportModes)rememberTransportModeModSaveData.storedTransportMode;
+            }
         }
     }
 }
